@@ -112,3 +112,26 @@ Planned modules :
 | INVD / WBINVD emulation | Instruction handling | Privileged; many thin HVs stub poorly |
 | Other MSR probes | Synthetic / invalid MSR, TSC MSR | Policy-dependent intercepts |
 | Kernel leaf-1 TSC-CPUID | EAC-style above | Same math as usermode, quieter environment |
+
+## Layout
+
+```text
+HvD/
+  include/     headers
+  src/         main.cpp, modules, ops.asm
+  static/      images
+  build/bin/   HvD.exe (after build)
+  HvD.sln
+  HvD.vcxproj
+  README.md
+```
+
+## Build
+
+Visual Studio 2022 + MSVC (v143), Windows SDK 10.0+ recommended.
+
+```text
+msbuild HvD.sln /m /p:Configuration=Release /p:Platform=x64
+```
+
+Output: `build\bin\HvD.exe`.

@@ -4,11 +4,11 @@
 #include <cstdio>
 #include <string>
 
-#include "include/common.hpp"
-#include "include/cpu_topology.hpp"
-#include "include/software_tick.hpp"
-#include "include/tsc_cpuid.hpp"
-#include "include/tsc_exit.hpp"
+#include "common.hpp"
+#include "cpu_topology.hpp"
+#include "software_tick.hpp"
+#include "tsc_cpuid.hpp"
+#include "tsc_exit.hpp"
 
 int main(int argc, char** argv)
 {

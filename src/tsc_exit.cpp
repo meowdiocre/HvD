@@ -1,4 +1,4 @@
-#include "include/tsc_exit.hpp"
+#include "tsc_exit.hpp"
 
 #include <windows.h>
 #include <intrin.h>

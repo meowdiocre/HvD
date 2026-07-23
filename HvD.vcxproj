@@ -47,13 +47,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="benchmark.cpp" />
-    <ClCompile Include="common.cpp" />
-    <ClCompile Include="cpu_topology.cpp" />
-    <ClCompile Include="software_tick.cpp" />
-    <ClCompile Include="tsc_exit.cpp" />
-    <ClCompile Include="tsc_cpuid.cpp" />
-    <MASM Include="ops.asm" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\common.cpp" />
+    <ClCompile Include="src\cpu_topology.cpp" />
+    <ClCompile Include="src\software_tick.cpp" />
+    <ClCompile Include="src\tsc_exit.cpp" />
+    <ClCompile Include="src\tsc_cpuid.cpp" />
+    <MASM Include="src\ops.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\common.hpp" />

@@ -1,4 +1,4 @@
-#include "include/cpu_topology.hpp"
+#include "cpu_topology.hpp"
 
 bool PinCurrentThread(const LogicalCpu cpu)
 {

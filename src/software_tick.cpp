@@ -1,4 +1,4 @@
-#include "include/software_tick.hpp"
+#include "software_tick.hpp"
 
 #include <windows.h>
 
