@@ -83,8 +83,20 @@ bool ParseOptions(const int argc, char** argv, BenchmarkOptions& options)
         } else if (std::strcmp(argument, "--tsc-cpuid") == 0) {
             selected |= static_cast<unsigned>(BenchmarkModule::TscCpuid);
             moduleSpecified = true;
+        } else if (std::strcmp(argument, "--k-tsc-cpuid") == 0) {
+            selected |= static_cast<unsigned>(BenchmarkModule::KTscCpuid);
+            moduleSpecified = true;
+        } else if (std::strcmp(argument, "--aperf-cpuid") == 0) {
+            selected |= static_cast<unsigned>(BenchmarkModule::AperfCpuid);
+            moduleSpecified = true;
+        } else if (std::strcmp(argument, "--invd") == 0) {
+            selected |= static_cast<unsigned>(BenchmarkModule::Invd);
+            moduleSpecified = true;
+        } else if (std::strcmp(argument, "--kernel") == 0) {
+            selected |= static_cast<unsigned>(BenchmarkModule::KernelAll);
+            moduleSpecified = true;
         } else if (std::strcmp(argument, "--all") == 0) {
-            selected |= static_cast<unsigned>(BenchmarkModule::All);
+            selected |= static_cast<unsigned>(BenchmarkModule::UserAll);
             moduleSpecified = true;
         } else if (std::strcmp(argument, "--vmcall") == 0) {
             options.vmcall = true;
@@ -95,7 +107,8 @@ bool ParseOptions(const int argc, char** argv, BenchmarkOptions& options)
         }
     }
     options.modules = static_cast<BenchmarkModule>(
-        moduleSpecified ? selected : static_cast<unsigned>(BenchmarkModule::All));
+        moduleSpecified ? selected
+                        : static_cast<unsigned>(BenchmarkModule::UserAll));
     return true;
 }
 
@@ -164,12 +177,13 @@ void PrintBanner(const bool plain)
 
     if (color) std::fputs(white, stdout);
     if (color) std::fputs(bold, stdout);
-    std::puts("  Hypervisor Detector R0 - R1");
+    std::puts("  Hypervisor Detector  (usermode + optional kernel)");
     if (color) std::fputs(reset, stdout);
 
     if (color) std::fputs(dim, stdout);
     std::puts("  Timing · MSR · research Type-1 / blue-pill hosts");
-    std::puts("  modules: software-tick · tsc-exit · tsc-cpuid");
+    std::puts("  user: software-tick · tsc-exit · tsc-cpuid");
+    std::puts("  kernel: k-tsc-cpuid · aperf-cpuid · invd  (needs HvDProbe.sys)");
     if (color) std::fputs(reset, stdout);
     std::putchar('\n');
 }
@@ -360,10 +374,14 @@ void PrintUsage(FILE* const output)
     std::fputs(
         "HvD.exe [samples] [flags]\n\n"
         "  samples              default 200000; software-tick only\n\n"
-        "  --all                all modules\n"
+        "  --all                all usermode modules (default)\n"
         "  --software-tick\n"
         "  --tsc-exit\n"
         "  --tsc-cpuid\n"
+        "  --kernel             all kernel modules (needs HvDProbe.sys)\n"
+        "  --k-tsc-cpuid        kernel leaf1 HIGH_LEVEL sandwich\n"
+        "  --aperf-cpuid        kernel APERF/MPERF around CPUID\n"
+        "  --invd               kernel INVD emulation check\n"
         "  --vmcall             include VMCALL in software-tick\n"
         "  --plain              text framing, no color\n",
         output);

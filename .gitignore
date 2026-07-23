@@ -1,12 +1,31 @@
+# Visual Studio
 .vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+
+# Build
 build/
+[Dd]ebug/
+[Rr]elease/
 x64/
+obj*/
 *.obj
+*.iobj
+*.ipdb
 *.pdb
 *.ilk
 *.tlog
 *.lastbuildstate
-*.user
-*.suo
-*.VC.db
-*.VC.opendb
+*.recipe
+*.log
+*.sys
+*.exe
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini

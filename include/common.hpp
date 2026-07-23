@@ -6,10 +6,15 @@
 #include <vector>
 
 enum class BenchmarkModule : unsigned {
-    SoftwareTick = 1,
-    TscExit = 2,
-    TscCpuid = 4,
-    All = 7
+    SoftwareTick = 1u << 0,
+    TscExit = 1u << 1,
+    TscCpuid = 1u << 2,
+    KTscCpuid = 1u << 3,
+    AperfCpuid = 1u << 4,
+    Invd = 1u << 5,
+    UserAll = SoftwareTick | TscExit | TscCpuid,
+    KernelAll = KTscCpuid | AperfCpuid | Invd,
+    All = UserAll  // default: usermode only; kernel needs --kernel or explicit flags
 };
 
 struct BenchmarkOptions {

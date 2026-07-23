@@ -53,6 +53,7 @@
     <ClCompile Include="src\software_tick.cpp" />
     <ClCompile Include="src\tsc_exit.cpp" />
     <ClCompile Include="src\tsc_cpuid.cpp" />
+    <ClCompile Include="src\kernel_modules.cpp" />
     <MASM Include="src\ops.asm" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +62,8 @@
     <ClInclude Include="include\software_tick.hpp" />
     <ClInclude Include="include\tsc_exit.hpp" />
     <ClInclude Include="include\tsc_cpuid.hpp" />
+    <ClInclude Include="include\kernel_modules.hpp" />
+    <ClInclude Include="include\hvd_ioctl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

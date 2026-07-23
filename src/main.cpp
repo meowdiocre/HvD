@@ -6,6 +6,7 @@
 
 #include "common.hpp"
 #include "cpu_topology.hpp"
+#include "kernel_modules.hpp"
 #include "software_tick.hpp"
 #include "tsc_cpuid.hpp"
 #include "tsc_exit.hpp"
@@ -29,19 +30,19 @@ int main(int argc, char** argv)
     };
     const auto printAffected = [&](const int code, const std::string& message) {
         if (selected(BenchmarkModule::SoftwareTick)) {
-            const ModuleResult result =
-                MakeSetupErrorResult("Software-tick timer", code, message);
-            PrintResult(result, options.plain);
+            PrintResult(
+                MakeSetupErrorResult("Software-tick timer", code, message),
+                options.plain);
         }
         if (selected(BenchmarkModule::TscExit)) {
-            const ModuleResult result =
-                MakeSetupErrorResult("TSC-exit timer", code, message);
-            PrintResult(result, options.plain);
+            PrintResult(
+                MakeSetupErrorResult("TSC-exit timer", code, message),
+                options.plain);
         }
         if (selected(BenchmarkModule::TscCpuid)) {
-            const ModuleResult result =
-                MakeSetupErrorResult("TSC-CPUID timer", code, message);
-            PrintResult(result, options.plain);
+            PrintResult(
+                MakeSetupErrorResult("TSC-CPUID timer", code, message),
+                options.plain);
         }
     };
 
@@ -82,6 +83,7 @@ int main(int argc, char** argv)
     }
 
     int exitCode = 0;
+
     if (selected(BenchmarkModule::SoftwareTick)) {
         ModuleResult result =
             cores.size() >= 2
@@ -107,6 +109,24 @@ int main(int argc, char** argv)
 
     if (selected(BenchmarkModule::TscCpuid)) {
         const ModuleResult result = RunTscCpuidTimer();
+        PrintResult(result, options.plain);
+        exitCode = CombineOutcome(exitCode, result.outcome);
+    }
+
+    if (selected(BenchmarkModule::KTscCpuid)) {
+        const ModuleResult result = RunKTscCpuidTimer();
+        PrintResult(result, options.plain);
+        exitCode = CombineOutcome(exitCode, result.outcome);
+    }
+
+    if (selected(BenchmarkModule::AperfCpuid)) {
+        const ModuleResult result = RunAperfCpuidTimer();
+        PrintResult(result, options.plain);
+        exitCode = CombineOutcome(exitCode, result.outcome);
+    }
+
+    if (selected(BenchmarkModule::Invd)) {
+        const ModuleResult result = RunInvdEmulationCheck();
         PrintResult(result, options.plain);
         exitCode = CombineOutcome(exitCode, result.outcome);
     }
