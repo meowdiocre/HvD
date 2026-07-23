@@ -1,0 +1,17 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+      - name: Build HvD
+        run: msbuild HvD.sln /m /p:Configuration=Release /p:Platform=x64

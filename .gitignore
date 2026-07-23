@@ -1,0 +1,12 @@
+.vs/
+build/
+x64/
+*.obj
+*.pdb
+*.ilk
+*.tlog
+*.lastbuildstate
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
