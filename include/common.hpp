@@ -51,6 +51,7 @@ struct SoftwareTickTripwire {
 bool ParseOptions(int argc, char** argv, BenchmarkOptions& options);
 bool SoftwareTickPasses(double ratio);
 bool TscExitPasses(std::uint64_t average);
+bool TscCpuidPasses(std::int64_t adjusted);
 SoftwareTickTripwire DetectSoftwareTickTripwire(
     double serializeTrimmedMean,
     double leaf0TrimmedMean);

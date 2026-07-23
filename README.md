@@ -12,7 +12,7 @@
 | --- | --- | --- | --- |
 | `--software-tick` | Software-tick timer | Cross-core counter: SERIALIZE vs CPUID leaf 0 | **PASS** if `leaf0_ratio < 2.5` |
 | `--tsc-exit` | TSC-exit timer | `RDTSC; CPUID(0); RDTSC` × 10, Sleep(500) between | **PASS** if `0 < average < 1000` |
-| `--tsc-cpuid` | TSC-CPUID timer | Leaf 1: 100× sandwich − RDTSC overhead | **Informational** |
+| `--tsc-cpuid` | TSC-CPUID timer | Leaf 1 versus paired block reference, normalized ratio | Reports stability and calibration state |
 | `--vmcall` | (with software-tick) | Optional VMCALL floor | Report only |
 | `--all` | | All **usermode** modules (default) | |
 | `--plain` | | Text framing, no color | |
@@ -21,7 +21,7 @@
 
 | Flag | Module | What it measures | Gate |
 | --- | --- | --- | --- |
-| `--k-tsc-cpuid` | K-TSC-CPUID timer | EAC-style: pin + HIGH_LEVEL, leaf 1, 100+100, `adjusted` | **Info** (calibrate offline) |
+| `--k-tsc-cpuid` | K-TSC-CPUID timer | EAC-style: pin + HIGH_LEVEL, leaf 1, 100+100, `adjusted` | **PASS** if `0 < adjusted < 1500` (same research bar; re-validate on kernel) |
 | `--aperf-cpuid` | APERF-CPUID timer | APERF/MPERF around CPUID(1) | **FAIL** if APERF delta == 0 |
 | `--invd` | INVD-emulation check | WBINVD / write / INVD coherence | **FAIL** if value looks emulated |
 | `--kernel` | | All kernel modules | |
@@ -71,7 +71,14 @@ Setup errors (**2+**) override gated failures (**1**).
 
 - Leaf 0, 10 samples, Sleep(500), **average < 1000**.
 
-### 3. K-TSC-CPUID / usermode TSC-CPUID ← EAC-style kernel routine
+### 3. Usermode TSC-CPUID
+
+- 20 ms non-yielding warmup.
+- 100 paired leaf-1/reference samples, with a 16-read reference block.
+- Median-of-5 normalized `adjusted_ratio` plus reference/trial MAD diagnostics.
+- Informational until a CPU-model and VBS-state calibration dataset exists.
+
+### 4. K-TSC-CPUID ← EAC-style kernel routine
 
 Quiet-window leaf-1 sandwich (HIGH_LEVEL in kernel path):
 
@@ -96,7 +103,7 @@ __writecr8(SavedIrql);
 // public threshold not known from reverse sketch — kernel module is info-only
 ```
 
-### 4. APERF / INVD
+### 5. APERF / INVD
 
 - APERF/MPERF: MSR IET-style checks around exiting instructions.
 - INVD: classic WBINVD/INVD coherence fingerprint for thin HVs.

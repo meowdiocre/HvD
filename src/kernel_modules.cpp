@@ -63,10 +63,7 @@ ModuleResult RunKTscCpuidTimer()
             "kernel probe returned failure status");
     }
 
-    // Info-only until calibrated against bare-metal HIGH_LEVEL baseline.
-    // Research gate candidate: adjusted >= 1000 (same order as force-exit).
-    const bool gated = false;
-    const bool passed = true;
+    const bool passed = TscCpuidPasses(result.Adjusted);
 
     return {
         "K-TSC-CPUID timer",
@@ -75,11 +72,12 @@ ModuleResult RunKTscCpuidTimer()
             {"cpuid_avg / rdtsc_avg",
              {std::to_string(result.CpuidAverage) + " / " +
               std::to_string(result.RdtscAverage)}},
-            {"adjusted", {std::to_string(result.Adjusted)}},
-            {"note", {"info only — calibrate gate offline"}},
+            {"adjusted / threshold",
+             {std::to_string(result.Adjusted) + " / 1500"}},
+            {"result", {passed ? "PASS" : "FAIL"}},
         },
-        {gated, passed, 0},
-        "EAC-style quiet leaf1 sandwich (kernel); no public threshold"};
+        {true, passed, 0},
+        "EAC-style quiet leaf1 sandwich (kernel). PASS if 0 < adjusted < 1500."};
 }
 
 ModuleResult RunAperfCpuidTimer()

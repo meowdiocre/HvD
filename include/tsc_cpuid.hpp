@@ -5,9 +5,11 @@
 #include <cstdint>
 
 struct CpuidRdtscTiming {
-    std::uint64_t cpuidAverage;
-    std::uint64_t rdtscAverage;
-    std::int64_t adjustedAverage;
+    std::uint64_t cpuidMedian;
+    double referenceMedian;
+    double adjustedRatio;
+    double stabilityPercent;
+    bool stable;
 };
 
 std::int64_t AverageAdjustedTiming(

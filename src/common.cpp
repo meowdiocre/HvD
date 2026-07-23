@@ -25,6 +25,7 @@ const char* ColorForValue(const std::string& value)
 {
     if (value.find("PASS") != std::string::npos) return kGreen;
     if (value.find("FAIL") != std::string::npos) return kRed;
+    if (value.find("UNCALIBRATED") != std::string::npos) return kYellow;
     if (value.find("SETUP_ERROR") != std::string::npos) return kYellow;
     if (value.find("unavailable") != std::string::npos) return kDim;
     return nullptr;
@@ -122,6 +123,11 @@ bool TscExitPasses(const std::uint64_t average)
     return average > 0 && average < 1000;
 }
 
+bool TscCpuidPasses(const std::int64_t adjusted)
+{
+    return adjusted > 0 && adjusted < 1500;
+}
+
 SoftwareTickTripwire DetectSoftwareTickTripwire(
     const double serializeTrimmedMean,
     const double leaf0TrimmedMean)
@@ -155,7 +161,6 @@ void PrintBanner(const bool plain)
     const char* reset = color ? kReset : "";
     const char* cyan = color ? kCyan : "";
     const char* bold = color ? kBold : "";
-    const char* dim = color ? kDim : "";
     const char* white = color ? kWhite : "";
 
     static const char* const kArt[] = {
@@ -170,20 +175,12 @@ void PrintBanner(const bool plain)
     std::putchar('\n');
     if (color) std::fputs(cyan, stdout);
     if (color) std::fputs(bold, stdout);
-    for (const char* line : kArt) {
-        std::puts(line);
-    }
+    for (const char* line : kArt) std::puts(line);
     if (color) std::fputs(reset, stdout);
 
     if (color) std::fputs(white, stdout);
     if (color) std::fputs(bold, stdout);
     std::puts("  Hypervisor Detector  (usermode + optional kernel)");
-    if (color) std::fputs(reset, stdout);
-
-    if (color) std::fputs(dim, stdout);
-    std::puts("  Timing · MSR · research Type-1 / blue-pill hosts");
-    std::puts("  user: software-tick · tsc-exit · tsc-cpuid");
-    std::puts("  kernel: k-tsc-cpuid · aperf-cpuid · invd  (needs HvDProbe.sys)");
     if (color) std::fputs(reset, stdout);
     std::putchar('\n');
 }
@@ -195,12 +192,6 @@ void PrintResult(const ModuleResult& result, const bool plain)
     const char* reset = color ? kReset : "";
     const char* dim = color ? kDim : "";
     const char* bold = color ? kBold : "";
-
-    if (!result.description.empty()) {
-        if (color) std::fputs(dim, stdout);
-        std::printf("  %s\n", result.description.c_str());
-        if (color) std::fputs(reset, stdout);
-    }
 
     if (plain) {
         std::printf("%s:\n", result.title.c_str());
