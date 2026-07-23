@@ -51,6 +51,7 @@ SoftwareTickTripwire DetectSoftwareTickTripwire(
     double leaf0TrimmedMean);
 int CombineOutcome(int currentExitCode, const ModuleOutcome& outcome);
 void EnableConsoleColor();
+void PrintBanner(bool plain);
 void PrintResult(const ModuleResult& result, bool plain);
 void PrintRunSummary(int exitCode, bool plain);
 ModuleResult MakeSetupErrorResult(

@@ -20,6 +20,7 @@ int main(int argc, char** argv)
 
     SetConsoleOutputCP(CP_UTF8);
     if (!options.plain) EnableConsoleColor();
+    PrintBanner(options.plain);
 
     const auto cores = FirstLogicalCpuPerCore();
     const auto selected = [&](const BenchmarkModule module) {

@@ -136,6 +136,44 @@ void EnableConsoleColor()
     if (SetConsoleMode(out, mode)) g_colorEnabled = true;
 }
 
+void PrintBanner(const bool plain)
+{
+    const bool color = g_colorEnabled && !plain;
+    const char* reset = color ? kReset : "";
+    const char* cyan = color ? kCyan : "";
+    const char* bold = color ? kBold : "";
+    const char* dim = color ? kDim : "";
+    const char* white = color ? kWhite : "";
+
+    static const char* const kArt[] = {
+        "  ██╗  ██╗██╗   ██╗██████╗ ",
+        "  ██║  ██║██║   ██║██╔══██╗",
+        "  ███████║██║   ██║██║  ██║",
+        "  ██╔══██║╚██╗ ██╔╝██║  ██║",
+        "  ██║  ██║ ╚████╔╝ ██████╔╝",
+        "  ╚═╝  ╚═╝  ╚═══╝  ╚═════╝ ",
+    };
+
+    std::putchar('\n');
+    if (color) std::fputs(cyan, stdout);
+    if (color) std::fputs(bold, stdout);
+    for (const char* line : kArt) {
+        std::puts(line);
+    }
+    if (color) std::fputs(reset, stdout);
+
+    if (color) std::fputs(white, stdout);
+    if (color) std::fputs(bold, stdout);
+    std::puts("  Hypervisor Detector R0 - R1");
+    if (color) std::fputs(reset, stdout);
+
+    if (color) std::fputs(dim, stdout);
+    std::puts("  Timing · MSR · research Type-1 / blue-pill hosts");
+    std::puts("  modules: software-tick · tsc-exit · tsc-cpuid");
+    if (color) std::fputs(reset, stdout);
+    std::putchar('\n');
+}
+
 void PrintResult(const ModuleResult& result, const bool plain)
 {
     const bool color = g_colorEnabled && !plain;
