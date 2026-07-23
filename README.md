@@ -17,7 +17,7 @@
 | `--all` | | All **usermode** modules (default) | |
 | `--plain` | | Text framing, no color | |
 
-## Measurements (kernel — needs `HvDProbe.sys`)
+## Measurements (kernel, need to load the driver first)
 
 | Flag | Module | What it measures | Gate |
 | --- | --- | --- | --- |
@@ -102,43 +102,3 @@ __writecr8(SavedIrql);
 - INVD: classic WBINVD/INVD coherence fingerprint for thin HVs.
 
 ---
-
-## Layout
-
-```text
-HvD/
-  include/          headers (+ hvd_ioctl.h shared ABI)
-  src/              usermode app
-  driver/           HvDProbe.sys sources
-  static/           images
-  build/bin/        HvD.exe
-  HvD.sln / HvD.vcxproj
-  README.md
-```
-
-## Build
-
-**Usermode**
-
-```text
-msbuild HvD.sln /m /p:Configuration=Release /p:Platform=x64
-```
-
-Output: `build\bin\HvD.exe`.
-
-**Kernel** (WDK Free Build Environment, in `driver/`)
-
-```text
-build -cZ
-```
-
-Then load `HvDProbe.sys` (test-signed machine only). See `driver/README.md`.
-
----
-
-## Non-goals
-
-- Full anti-cheat product surface.
-- Claiming usermode leaf1 ≡ commercial AC kernel verdict without calibration.
-- Production / unsigned driver on protected systems.
-```

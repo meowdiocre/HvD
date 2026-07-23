@@ -6,6 +6,8 @@
 DRIVER_INITIALIZE DriverEntry;
 DRIVER_UNLOAD HvdUnload;
 
+void HvdAsmInvd(void);
+
 static PDEVICE_OBJECT g_DeviceObject = NULL;
 
 static NTSTATUS
@@ -153,7 +155,7 @@ HvdRunInvd(
     _mm_mfence();
     __wbinvd();
     *bytePtr = 0;
-    __invd();
+    HvdAsmInvd();
     storage = *(volatile unsigned long long*)&storage;
 
     _enable();
