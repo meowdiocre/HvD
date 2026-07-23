@@ -73,8 +73,6 @@ static void WarmUpProcessor()
 
     int registers[4]{};
     volatile int cpuidResult = 0;
-    // ponytail: fixed 20 ms warmup targets same-run repeatability; replace with
-    // convergence-based warmup when a cross-machine calibration harness exists.
     do {
         __cpuid(registers, 1);
         cpuidResult ^= registers[0];

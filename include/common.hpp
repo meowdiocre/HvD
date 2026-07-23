@@ -13,9 +13,14 @@ enum class BenchmarkModule : unsigned {
     AperfCpuid = 1u << 4,
     Invd = 1u << 5,
     UserAll = SoftwareTick | TscExit | TscCpuid,
-    KernelAll = KTscCpuid | AperfCpuid | Invd,
+    KernelAll = KTscCpuid | AperfCpuid,
     All = UserAll  // default: usermode only; kernel needs --kernel or explicit flags
 };
+
+static_assert(
+    static_cast<unsigned>(BenchmarkModule::KernelAll) ==
+    (static_cast<unsigned>(BenchmarkModule::KTscCpuid) |
+     static_cast<unsigned>(BenchmarkModule::AperfCpuid)));
 
 struct BenchmarkOptions {
     unsigned sampleCount = 200000;

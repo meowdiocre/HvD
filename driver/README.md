@@ -13,8 +13,8 @@ Kernel probe driver for HvD (`\\.\HvD`).
 | --- | --- | --- |
 | `HVD_IOCTL_K_TSC_CPUID` | `--k-tsc-cpuid` | Pin + HIGH_LEVEL, leaf1 100+100 |
 | `HVD_IOCTL_APERF_CPUID` | `--aperf-cpuid` | APERF/MPERF around CPUID |
-| `HVD_IOCTL_INVD` | `--invd` | WBINVD / INVD check |
-| | `--kernel` | All kernel modules |
+| `HVD_IOCTL_INVD` | `--invd` | Disabled; returns unsupported |
+| | `--kernel` | K-TSC-CPUID and APERF-CPUID |
 
 ## Load (test machine only)
 

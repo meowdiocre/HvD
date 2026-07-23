@@ -1,6 +1,9 @@
 # HvD (Development)
 
-![HvD Output](./static/image.png)
+Usermode
+![HvD Output](./static/um.png)
+Kernel
+![Hvd Kernel](./static/km.png)
 
 **HvD** (Hypervisor Detector) is a modular **usermode + optional kernel** harness for research Type-1 / blue-pill hypervisors on Windows x64.
 

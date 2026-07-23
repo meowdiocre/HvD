@@ -6,8 +6,6 @@
 DRIVER_INITIALIZE DriverEntry;
 DRIVER_UNLOAD HvdUnload;
 
-void HvdAsmInvd(void);
-
 static PDEVICE_OBJECT g_DeviceObject = NULL;
 
 static NTSTATUS
@@ -60,7 +58,6 @@ HvdRunKTscCpuid(
 
     HvdPinCurrentProcessor(&previous);
     KeRaiseIrql(HIGH_LEVEL, &oldIrql);
-    _disable();
 
     for (index = 0; index < 100; ++index) {
         const unsigned long long before = __rdtsc();
@@ -81,7 +78,6 @@ HvdRunKTscCpuid(
         rdtscTotal += after - before;
     }
 
-    _enable();
     KeLowerIrql(oldIrql);
     KeRevertToUserGroupAffinityThread(&previous);
 
@@ -119,15 +115,11 @@ HvdRunAperfCpuid(
 
     HvdPinCurrentProcessor(&previous);
     KeRaiseIrql(HIGH_LEVEL, &oldIrql);
-    _disable();
-
     Result->MperfBefore = __readmsr(0xE7);
     Result->AperfBefore = __readmsr(0xE8);
     __cpuid(regs, 1);
     Result->AperfAfter = __readmsr(0xE8);
     Result->MperfAfter = __readmsr(0xE7);
-
-    _enable();
     KeLowerIrql(oldIrql);
     KeRevertToUserGroupAffinityThread(&previous);
 
@@ -135,35 +127,6 @@ HvdRunAperfCpuid(
     Result->MperfDelta = Result->MperfAfter - Result->MperfBefore;
     Result->Status = HVD_STATUS_OK;
     UNREFERENCED_PARAMETER(regs);
-}
-
-static VOID
-HvdRunInvd(
-    _Out_ HVD_INVD_RESULT* Result
-    )
-{
-    KIRQL oldIrql;
-    unsigned long long storage = 1;
-    volatile unsigned char* bytePtr;
-
-    RtlZeroMemory(Result, sizeof(*Result));
-    bytePtr = (volatile unsigned char*)&storage;
-
-    KeRaiseIrql(HIGH_LEVEL, &oldIrql);
-    _disable();
-
-    _mm_mfence();
-    __wbinvd();
-    *bytePtr = 0;
-    HvdAsmInvd();
-    storage = *(volatile unsigned long long*)&storage;
-
-    _enable();
-    KeLowerIrql(oldIrql);
-
-    Result->Value = storage;
-    Result->Detected = (storage == 0) ? 1u : 0u;
-    Result->Status = HVD_STATUS_OK;
 }
 
 static NTSTATUS
@@ -210,7 +173,8 @@ HvdDeviceControl(
             status = STATUS_BUFFER_TOO_SMALL;
             break;
         }
-        HvdRunInvd((HVD_INVD_RESULT*)buffer);
+        RtlZeroMemory(buffer, sizeof(HVD_INVD_RESULT));
+        ((HVD_INVD_RESULT*)buffer)->Status = HVD_STATUS_UNSUPPORTED;
         information = sizeof(HVD_INVD_RESULT);
         status = STATUS_SUCCESS;
         break;

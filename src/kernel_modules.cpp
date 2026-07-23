@@ -133,6 +133,12 @@ ModuleResult RunInvdEmulationCheck()
             "probe driver not loaded (\\\\.\\HvD)");
     }
 
+    if (result.Status == HVD_STATUS_UNSUPPORTED) {
+        return MakeSetupErrorResult(
+            "INVD-emulation check",
+            6,
+            "probe disabled: INVD can raise a fatal kernel exception");
+    }
     if (result.Status != HVD_STATUS_OK) {
         return MakeSetupErrorResult(
             "INVD-emulation check",

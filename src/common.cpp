@@ -369,10 +369,10 @@ void PrintUsage(FILE* const output)
         "  --software-tick\n"
         "  --tsc-exit\n"
         "  --tsc-cpuid\n"
-        "  --kernel             all kernel modules (needs HvDProbe.sys)\n"
+        "  --kernel             kernel modules except INVD (needs HvDProbe.sys)\n"
         "  --k-tsc-cpuid        kernel leaf1 HIGH_LEVEL sandwich\n"
         "  --aperf-cpuid        kernel APERF/MPERF around CPUID\n"
-        "  --invd               kernel INVD emulation check\n"
+        "  --invd               disabled kernel INVD probe\n"
         "  --vmcall             include VMCALL in software-tick\n"
         "  --plain              text framing, no color\n",
         output);
