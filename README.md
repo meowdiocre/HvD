@@ -26,8 +26,8 @@ Kernel
 | --- | --- | --- | --- |
 | `--k-tsc-cpuid` | K-TSC-CPUID timer | EAC-style: pin + HIGH_LEVEL, leaf 1, 100+100, `adjusted` | **PASS** if `0 < adjusted < 1500` (same research bar; re-validate on kernel) |
 | `--aperf-cpuid` | APERF-CPUID timer | APERF/MPERF around CPUID(1) | **FAIL** if APERF delta == 0 |
-| `--invd` | INVD-emulation check | WBINVD / write / INVD coherence | **FAIL** if value looks emulated |
-| `--kernel` | | All kernel modules | |
+| `--invd` | Disabled INVD probe | Driver returns unsupported | Setup error **6** when the driver is present |
+| `--kernel` | | K-TSC-CPUID and APERF-CPUID; excludes INVD | |
 
 Device: `\\.\HvD`. Driver missing → setup code **8** (other modules still run).  
 See [`driver/README.md`](driver/README.md).
@@ -40,7 +40,7 @@ HvD.exe 200000 --software-tick --tsc-exit
 HvD.exe --tsc-cpuid --plain
 HvD.exe --all --vmcall
 HvD.exe --kernel
-HvD.exe --k-tsc-cpuid --aperf-cpuid --invd
+HvD.exe --k-tsc-cpuid --aperf-cpuid
 ```
 
 ---
@@ -103,12 +103,25 @@ for (i = 0; i < 100; i++) {
 }
 __writecr8(SavedIrql);
 // adjusted ≈ avg_cpuid - avg_rdtsc
-// public threshold not known from reverse sketch — kernel module is info-only
+// HvD applies a local research gate: 0 < adjusted < 1500.
+// This is not a claimed official threshold for another product.
 ```
 
 ### 5. APERF / INVD
 
 - APERF/MPERF: MSR IET-style checks around exiting instructions.
-- INVD: classic WBINVD/INVD coherence fingerprint for thin HVs.
+- INVD: disabled in the current driver because the probe can raise a fatal kernel exception. An explicit `--invd` request returns unsupported (setup error 6) when the driver is available; it is excluded from `--kernel`.
 
 ---
+
+## Status and interpretation
+
+Research prototype. PASS/FAIL labels describe this harness's configured checks; they do not prove the presence or absence of every hypervisor. Record the CPU model, Windows build, VBS/Hyper-V state, source revision, and raw measurements when comparing runs. User-mode TSC-CPUID remains informational until a calibration dataset is established.
+
+## Related projects
+
+[JohnSmith](https://github.com/meowdiocre/JohnSmith) is the companion research hypervisor. [johnsmithctl](https://github.com/meowdiocre/johnsmithctl) includes control and HvDProbe service-management support.
+
+## License
+
+This repository does not currently declare a project license. Source references are listed above.
